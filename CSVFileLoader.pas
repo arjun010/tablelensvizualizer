@@ -54,6 +54,7 @@ end;
 procedure TCSVFileLoader.Load(SrcFile: String; Dest: TTableData);
 begin
 DataTable:=Dest;
+LoadCSVFile(SrcFile, ';');
 end;
 
 

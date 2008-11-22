@@ -2,7 +2,9 @@ program TableLensVisualizer;
 
 uses
   Forms,
-  MainFormUnit in 'MainFormUnit.pas' {MainForm};
+  MainFormUnit in 'MainFormUnit.pas' {MainForm},
+  CSVFileLoader in 'CSVFileLoader.pas',
+  TableData in 'TableData.pas';
 
 {$R *.res}
 
