@@ -4,7 +4,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Grids, ExtCtrls, ComCtrls, Menus;
+  Dialogs, Grids, ExtCtrls, ComCtrls, Menus, CSVFileLoader, TableData;
 
 type
   TMainForm = class(TForm)
@@ -15,7 +15,8 @@ type
     itmFile: TMenuItem;
     itmLoadFromFile: TMenuItem;
     itmLoadFromDB: TMenuItem;
-    StatusBar1: TStatusBar;
+    StatusBar: TStatusBar;
+    procedure FormCreate(Sender: TObject);
   private
     { Private declarations }
   public
@@ -28,5 +29,17 @@ var
 implementation
 
 {$R *.dfm}
+
+procedure TMainForm.FormCreate(Sender: TObject);
+var
+  Fname:String;
+  FileLoader:TCSVFileLoader;
+begin
+fname:=ExtractFilePath(Application.ExeName)+'\test1.csv';
+
+FileLoader:=TCSVFileLoader.Create();
+FileLoader.Load(Fname, TTableData.create());
+FileLoader.Destroy;
+end;
 
 end.
