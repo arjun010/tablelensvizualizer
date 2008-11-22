@@ -2,7 +2,7 @@ program TableLensVisualizer;
 
 uses
   Forms,
-  Unit1 in 'Unit1.pas' {MainForm};
+  MainFormUnit in 'MainFormUnit.pas' {MainForm};
 
 {$R *.res}
 
