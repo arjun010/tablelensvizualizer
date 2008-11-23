@@ -15,36 +15,67 @@ object MainForm: TMainForm
   OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
-  object GridContainer: TPanel
-    Left = 0
-    Top = 0
-    Width = 862
-    Height = 435
-    Align = alClient
-    BevelInner = bvLowered
-    BevelOuter = bvNone
-    TabOrder = 0
-    object GridImage: TPaintBox
-      Left = 1
-      Top = 18
-      Width = 860
-      Height = 416
-      Align = alClient
-    end
-    object GridHeader: THeaderControl
-      Left = 1
-      Top = 1
-      Width = 860
-      Height = 17
-      Sections = <>
-    end
-  end
   object StatusBar: TStatusBar
     Left = 0
     Top = 435
     Width = 862
     Height = 19
     Panels = <>
+    SimplePanel = True
+  end
+  object PageControl: TPageControl
+    Left = 0
+    Top = 0
+    Width = 862
+    Height = 435
+    ActivePage = TabStringGrid
+    Align = alClient
+    HotTrack = True
+    TabOrder = 1
+    object TabLensTable: TTabSheet
+      Caption = 'TabLensTable'
+      object GridContainer: TPanel
+        Left = 0
+        Top = 0
+        Width = 854
+        Height = 407
+        Align = alClient
+        BevelInner = bvLowered
+        BevelOuter = bvNone
+        TabOrder = 0
+        object GridImage: TPaintBox
+          Left = 1
+          Top = 18
+          Width = 852
+          Height = 388
+          Align = alClient
+        end
+        object GridHeader: THeaderControl
+          Left = 1
+          Top = 1
+          Width = 852
+          Height = 17
+          Sections = <>
+        end
+      end
+    end
+    object TabStringGrid: TTabSheet
+      Caption = 'TabStringGrid'
+      ImageIndex = 1
+      object StringGrid1: TStringGrid
+        Left = 0
+        Top = 0
+        Width = 854
+        Height = 407
+        Align = alClient
+        ColCount = 1
+        DefaultRowHeight = 16
+        FixedCols = 0
+        RowCount = 2
+        Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goColSizing, goColMoving, goRowSelect]
+        TabOrder = 0
+      end
+    end
   end
   object MainMenu: TMainMenu
     Left = 40
