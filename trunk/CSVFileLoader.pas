@@ -34,13 +34,13 @@ begin
      s2 := copy(s1,1,pos(separator, s1)-1);
      j := j + 1;
      delete (s1, 1, pos(separator, S1));
-     DataTable.SetByXY(j-1, i-1, s2);
+     DataTable.SetByRC(i-1, j-1, s2);
     end;
 
    if pos (separator, s1)=0 then
     begin
      j := j + 1;
-     DataTable.SetByXY(j-1, i-1, s1);
+     DataTable.SetByRC(i-1, j-1, s1);
     end;
 
    //StringGrid1.ColCount := j;
