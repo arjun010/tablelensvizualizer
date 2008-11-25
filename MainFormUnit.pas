@@ -73,16 +73,17 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  TableData:=TDataTable.create();
-  FileLoader:=TCSVFileLoader.Create();
   Logger:=TLogger.Create(Application.ExeName);
+
+  TableData:=TDataTable.create(Logger);
+  FileLoader:=TCSVFileLoader.Create;
 end;
 
 procedure TMainForm.btnLoadClick(Sender: TObject);
 var
   Fname:String;
 begin
-  fname:=ExtractFilePath(Application.ExeName)+'\test 10 000.csv';
+  fname:=ExtractFilePath(Application.ExeName)+'\test perfdata.csv';
 
   try
    FileLoader.Load(Fname, TableData);
@@ -90,7 +91,8 @@ begin
     on e:EOutOfMemory do ShowMessage('Файл слишком велик');
   end;
 
-  TableData.analyzeColumnTypes(Logger);
+  TableData.analyzeColumnTypes;
+  TableData.analyzeColumnsCardinalityAndContent;
 end;
 
 procedure TMainForm.btnFillGridClick(Sender: TObject);
