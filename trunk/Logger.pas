@@ -35,6 +35,7 @@ procedure TLogger.LogStr(S: String);
 begin
   {writing in the log file}
   writeln(outf, datetimetostr(now) + chr(9) + S);
+  sleep(100);
 end;
 
 end.
