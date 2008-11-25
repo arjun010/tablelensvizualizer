@@ -1,10 +1,13 @@
 program TableLensVisualizer;
 
+
+
 uses
   Forms,
   MainFormUnit in 'MainFormUnit.pas' {MainForm},
   CSVFileLoader in 'CSVFileLoader.pas',
-  TableData in 'TableData.pas';
+  TableData in 'TableData.pas',
+  Logger in 'Logger.pas';
 
 {$R *.res}
 
