@@ -11,17 +11,20 @@ type
     OriginalValue: string;
     CalculatedValue: Variant;
   end;
+  TStringArray=array of string;
 
   TColumnInfo=record
     Title: string;
     ColType: TColumnDataType;
     Cardinality: LongWord;
+    UniqueSet: TStringArray;
+    MaxVal: Double; 
   end;
 
   TDataRow=array of TDataCell;
   TDataTable=class
   public
-    constructor Create;
+    constructor Create(aLogger:TLogger);
     procedure SetCellByRC(RowIndex: TRowIndex;  ColumnIndex:TColIndex; Value:TDataCell);
     procedure SetOriginalValueByRC(RowIndex: TRowIndex;  ColumnIndex:TColIndex; Value:String);
     procedure setColumnTitle(ColNo: TColIndex; Title: String);
@@ -30,12 +33,15 @@ type
     function  getColCount(): TColIndex;
     function  getColumnInfo(ColNo: TColIndex):TColumnInfo;
     procedure analyzeColumnTypes;
-    procedure analyzeColumnsCardinality;
+    procedure analyzeColumnsCardinalityAndContent;
   private
     Rows: array of TDataRow;
     ColumnInfo: array of TColumnInfo;
+    Logger:TLogger;
     function IsNumeric(S: string): boolean;
-end;
+    procedure PutUniqueValueInArray(Value: string; var StrArray: TStringArray);
+
+  end;
 implementation
 
 { TTableData }
@@ -76,7 +82,7 @@ end;
 
 constructor TDataTable.Create;
 begin
-SetLength(Rows, 0, 0);
+Logger:=aLogger;
 end;
 
 function TDataTable.getByRC;
@@ -135,27 +141,29 @@ Cell.OriginalValue:=Value;
 SetCellByRC(RowIndex, ColumnIndex, Cell);
 end;
 
-procedure TDataTable.analyzeColumnsCardinality;
+procedure TDataTable.analyzeColumnsCardinalityAndContent;
 var
     ColNo: TColIndex;
     RowNo: TRowIndex;
-    ColType: TColumnDataType;
-    StrValue: String;
 begin
 for ColNo:=0 to Length(ColumnInfo)-1 do
-  begin
-  ColType:=ctNumeric;
   for RowNo:=0 to Length(Rows)-1 do
-    begin
-    StrValue:=Rows[RowNo][ColNo].OriginalValue;
-    if not IsNumeric(StrValue) then
-      begin
-      ColType:=ctString;
-      break;
-      end;
-    end;
-    ColumnInfo[ColNo].ColType:=ColType;
+    PutUniqueValueInArray(Rows[RowNo][ColNo].OriginalValue, ColumnInfo[ColNo].UniqueSet);
+end;
+
+procedure TDataTable.PutUniqueValueInArray(Value: string;
+  var StrArray: TStringArray);
+var n: LongWord;
+begin
+n:=0;
+while (n<LongWord(Length(StrArray))) do
+  begin
+  if StrArray[n]=Value then exit;
+  inc(n);
   end;
+
+SetLength(StrArray, length(StrArray)+1);
+StrArray[length(StrArray)-1]:=Value;
 end;
 
 end.
