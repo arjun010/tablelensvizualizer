@@ -68,7 +68,10 @@ for Col:=0 to Data.getColCount-1 do
 
 for Row:=0 to Data.getRowCount()-1 do
   for Col:=0 to Data.getColCount-1 do
-    Grid.Cells[Col, Row+1]:=Data.getByRC(Row, Col).OriginalValue;
+    Grid.Cells[Col, Row+1]:=Data.getByRC(Row, Col).OriginalValue
+      +' / '+FloatToStr(Data.getByRC(Row, Col).NumericValue)
+      //+' / '+FloatToStr(Data.getByRC(Row, Col).VisualValue)
+      ;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -92,7 +95,8 @@ begin
   end;
 
   TableData.analyzeColumnTypes;
-  TableData.analyzeColumnsCardinalityAndContent;
+  TableData.analyzeColumnsPass1;
+  TableData.analyzeColumnsPass2;
 end;
 
 procedure TMainForm.btnFillGridClick(Sender: TObject);

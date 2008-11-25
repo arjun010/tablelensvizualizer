@@ -9,7 +9,8 @@ type
   TColumnDataType=(ctString, ctNumeric);
   TDataCell=record
     OriginalValue: string;
-    CalculatedValue: Variant;
+    NumericValue: Double;
+    VisualValue: Double;
   end;
   TStringArray=array of string;
 
@@ -33,7 +34,8 @@ type
     function  getColCount(): TColIndex;
     function  getColumnInfo(ColNo: TColIndex):TColumnInfo;
     procedure analyzeColumnTypes;
-    procedure analyzeColumnsCardinalityAndContent;
+    procedure analyzeColumnsPass1;
+    procedure analyzeColumnsPass2;
   private
     Rows: array of TDataRow;
     ColumnInfo: array of TColumnInfo;
@@ -141,16 +143,6 @@ Cell.OriginalValue:=Value;
 SetCellByRC(RowIndex, ColumnIndex, Cell);
 end;
 
-procedure TDataTable.analyzeColumnsCardinalityAndContent;
-var
-    ColNo: TColIndex;
-    RowNo: TRowIndex;
-begin
-for ColNo:=0 to Length(ColumnInfo)-1 do
-  for RowNo:=0 to Length(Rows)-1 do
-    PutUniqueValueInArray(Rows[RowNo][ColNo].OriginalValue, ColumnInfo[ColNo].UniqueSet);
-end;
-
 procedure TDataTable.PutUniqueValueInArray(Value: string;
   var StrArray: TStringArray);
 var n: LongWord;
@@ -164,6 +156,51 @@ while (n<LongWord(Length(StrArray))) do
 
 SetLength(StrArray, length(StrArray)+1);
 StrArray[length(StrArray)-1]:=Value;
+end;
+
+procedure TDataTable.analyzeColumnsPass1;
+var
+    ColNo: TColIndex;
+    RowNo: TRowIndex;
+    Cell: TDataCell;
+begin
+for ColNo:=0 to Length(ColumnInfo)-1 do
+  begin
+  for RowNo:=0 to Length(Rows)-1 do
+    begin
+    Cell:=Rows[RowNo][ColNo];
+    PutUniqueValueInArray(Cell.OriginalValue, ColumnInfo[ColNo].UniqueSet);
+
+    // рассчитаем числовые значения
+    Cell.NumericValue:=0;
+    case ColumnInfo[ColNo].ColType of
+      ctNumeric:
+        Cell.NumericValue:=StrToFloatDef(Cell.OriginalValue, 0);
+      ctString:
+        Cell.NumericValue:=Length(Cell.OriginalValue);
+    end; //case
+
+    // рассчитываем максимальное значение
+    if ColumnInfo[ColNo].MaxVal<Cell.NumericValue then
+      ColumnInfo[ColNo].MaxVal:=Cell.NumericValue;
+    end;
+    Logger.LogStr('Maxval: '+floatToStr(ColumnInfo[ColNo].MaxVal));
+  end;
+end;
+
+procedure TDataTable.analyzeColumnsPass2;
+var
+    ColNo: TColIndex;
+    RowNo: TRowIndex;
+    Cell: TDataCell;
+begin
+for ColNo:=0 to Length(ColumnInfo)-1 do
+  for RowNo:=0 to Length(Rows)-1 do
+    begin
+    Cell:=Rows[RowNo][ColNo];
+    if ColumnInfo[ColNo].MaxVal<>0 then
+      Cell.VisualValue:=Cell.NumericValue/ColumnInfo[ColNo].MaxVal;
+    end;
 end;
 
 end.
