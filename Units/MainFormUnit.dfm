@@ -30,7 +30,7 @@ object MainForm: TMainForm
     Top = 0
     Width = 632
     Height = 286
-    ActivePage = TabStringGrid
+    ActivePage = TabLensTable
     Align = alClient
     HotTrack = True
     TabOrder = 1
@@ -57,6 +57,8 @@ object MainForm: TMainForm
           Top = 1
           Width = 622
           Height = 17
+          FullDrag = False
+          HotTrack = True
           Sections = <>
         end
       end
