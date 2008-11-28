@@ -13,6 +13,7 @@ uses
 
 begin
   Application.Initialize;
+  Application.Title := 'Table Lens Data Vizualizer';
   Application.CreateForm(TMainForm, MainForm);
   Application.Run;
 end.
