@@ -93,8 +93,15 @@ end;
 function TDataTable.getByRC;
 var Row:TDataRow;
 begin
-Row:=Rows[RowIndex];
-Result:=Row[ColumnIndex];
+if RowIndex>TRowIndex(Length(Rows))-1 then
+  raise Exception.Create('Индекс строки больше чем количество строк')
+else
+  Row:=Rows[RowIndex];
+
+if ColumnIndex>Length(ColumnInfo)-1 then
+  raise Exception.Create('Индекс столбца больше чем количество столбцов')
+else
+  Result:=Row[ColumnIndex];
 end;
 
 function TDataTable.getColCount: TColIndex;
@@ -104,6 +111,8 @@ end;
 
 function TDataTable.getColumnInfo(ColNo: TColIndex): TColumnInfo;
 begin
+if ColNo>Length(ColumnInfo)-1 then
+  raise Exception.Create('Индекс столбца больше чем количество столбцов');
 Result:=ColumnInfo[ColNo];
 end;
 

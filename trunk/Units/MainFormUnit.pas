@@ -6,6 +6,7 @@ uses
   Logger,
   CSVFileLoader,
   TableData,
+  LensTableControl,
   ComCtrls,
   ExtCtrls,
   Grids,
@@ -46,6 +47,7 @@ type
     TableData:TDataTable;
     FileLoader:TCSVFileLoader;
     Logger:TLogger;
+    TableLensControl:TLensTableControl;
 
     procedure FillStringGrid(Grid: TStringGrid; Data: TDataTable);
     procedure LoadFile(fname: string);
@@ -88,8 +90,11 @@ procedure TMainForm.FormCreate(Sender: TObject);
 begin
   Logger:=TLogger.Create(Application.ExeName);
 
-  TableData:=TDataTable.create(Logger);
   FileLoader:=TCSVFileLoader.Create;
+
+  TableData:=TDataTable.create(Logger);
+
+  TableLensControl:=TLensTableControl.Create(GridImage, GridHeader, TableData);
 end;
 
 procedure TMainForm.btnFillGridClick(Sender: TObject);
@@ -99,7 +104,9 @@ end;
 
 procedure TMainForm.LoadFile(fname: string);
 begin
-  fname:=ExtractFilePath(Application.ExeName)+'\..\'+fname;
+  fname:=ExtractFilePath(Application.ExeName)+'..\TestData\'+fname;
+  if not FileExists(fname) then
+    raise Exception.Create('File not found: '+fname);
 
   try
    FileLoader.Load(Fname, TableData);
@@ -112,6 +119,8 @@ begin
   TableData.analyzeColumnsPass2;
 
   btnFillGrid.Click;
+
+  TableLensControl.PrepareLensTable;
 end;
 
 procedure TMainForm.btnLoadClick(Sender: TObject);
