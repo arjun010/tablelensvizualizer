@@ -88,16 +88,16 @@ RemoteSymbols=0
 MinStackSize=16384
 MaxStackSize=1048576
 ImageBase=4194304
-ExeDescription=
+ExeDescription=Table Lens Data Vizualizer
 [Directories]
-OutputDir=
-UnitOutputDir=
-PackageDLLOutputDir=
-PackageDCPOutputDir=
+OutputDir=.\Binaries\
+UnitOutputDir=.\Binaries\
+PackageDLLOutputDir=.\Binaries\
+PackageDCPOutputDir=.\Binaries\
 SearchPath=
-Packages=
+Packages=vcl;rtl;dsnapcon;dsnap;dbrtl;vcldb;vclx;adortl;bdertl;vcldbx;ibxpress;teeui;teedb;tee;dss;visualclx;visualdbclx;vclactnband
 Conditionals=
-DebugSourceDirs=
+DebugSourceDirs=.\Binaries\
 UsePackages=0
 [Parameters]
 RunParams=
@@ -106,13 +106,13 @@ Launcher=
 UseLauncher=0
 DebugCWD=
 [Version Info]
-IncludeVerInfo=0
+IncludeVerInfo=1
 AutoIncBuild=0
-MajorVer=1
+MajorVer=0
 MinorVer=0
 Release=0
 Build=0
-Debug=0
+Debug=1
 PreRelease=0
 Special=0
 Private=0
@@ -120,13 +120,31 @@ DLL=0
 Locale=1049
 CodePage=1251
 [Version Info Keys]
-CompanyName=
-FileDescription=
-FileVersion=1.0.0.0
-InternalName=
-LegalCopyright=
+CompanyName=APCreations
+FileDescription=Table Lens Data Vizualizer
+FileVersion=0.0.0.0
+InternalName=Table Lens Data Vizualizer
+LegalCopyright=BSD
 LegalTrademarks=
 OriginalFilename=
-ProductName=
+ProductName=Table Lens Data Vizualizer
 ProductVersion=1.0.0.0
-Comments=
+Comments=Peace, man!
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=.\Binaries\
+[HistoryLists\hlUnitAliases]
+Count=1
+Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
+[HistoryLists\hlUnitOutputDirectory]
+Count=1
+Item0=.\Binaries\
+[HistoryLists\hlOutputDirectorry]
+Count=1
+Item0=.\Binaries\
+[HistoryLists\hlBPLOutput]
+Count=1
+Item0=.\Binaries\
+[HistoryLists\hlDCPOutput]
+Count=1
+Item0=.\Binaries\
