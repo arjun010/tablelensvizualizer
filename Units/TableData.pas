@@ -4,11 +4,11 @@ interface
 uses Logger, SysUtils;
 
 type
+  TColumnSortMode=(csmNone, csmAscending, csmDescending);
   TColIndex=byte;
   TRowIndex=LongWord;
   TFloat=Currency;
   TColumnDataType=(ctString, ctNumeric);
-  TColumnSortMode=(csmNone, csmAscending, csmDescending);
   TString=ShortString;
   TDataCell=record
     OriginalValue: TString;
@@ -49,10 +49,10 @@ type
     Logger:TLogger;
     function IsNumeric(S: string): boolean;
     procedure PutUniqueValueInArray(Value: string; var StrArray: TStringArray);
-
   end;
 implementation
 
+uses QuickSorter;
 { TTableData }
 
 function TDataTable.IsNumeric(S: string): boolean;
@@ -253,8 +253,7 @@ else
   ColumnInfo[ColToSort].SortMode:=csmAscending;
 
 // do sort
-
-// TODO: do sort
+TQuickSorter.SortRows(Rows, ColToSort, ColumnInfo[ColToSort].SortMode);
 end;
 
 end.
