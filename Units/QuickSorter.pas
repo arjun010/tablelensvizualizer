@@ -42,7 +42,9 @@ class procedure TQuickSorter.SortRowsImpl;
         while Rows[NewLeftIndex][ColToSort].NumericValue>MiddleValue.NumericValue do
           inc(NewLeftIndex);
         while MiddleValue.NumericValue>Rows[NewRightIndex][ColToSort].NumericValue do
+          begin
           dec(NewRightIndex);
+          end;
         end;
 
       if NewLeftIndex<=NewRightIndex then
@@ -51,8 +53,10 @@ class procedure TQuickSorter.SortRowsImpl;
         Rows[NewLeftIndex]:=Rows[NewRightIndex];
         Rows[NewRightIndex]:=SwapRow;
 
-        inc(NewLeftIndex);
-        dec(NewRightIndex);
+        if NewLeftIndex<TRowIndex(Length(Rows)-1) then
+         inc(NewLeftIndex);
+        if NewRightIndex>0 then
+          dec(NewRightIndex);
       end;
     until NewLeftIndex>NewRightIndex;
     
