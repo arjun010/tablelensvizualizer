@@ -2,10 +2,11 @@ unit LensTableControl;
 
 interface
 uses
+  Dialogs,
   ExtCtrls,
   ComCtrls,
   TableData,
-  Graphics;
+  Graphics, math;
 
 type TLensTableControl=class
   public
@@ -18,13 +19,14 @@ type TLensTableControl=class
     procedure OnPaintBox(Sender: TObject);
     procedure PaintColumn(Box: TPaintBox; ColNo: TColIndex);
     procedure OnHeaderResize(Sender: TObject);
-    procedure OnHeaderSectionResize(Header: THeaderControl; Section :THeaderSection);
+    procedure OnHeaderClick(aHeader: THeaderControl; Section :THeaderSection);
+    procedure OnHeaderSectionResize(aHeader: THeaderControl; Section :THeaderSection);
     procedure PaintGradientColumn(Box: TPaintBox; ColNo: TColIndex);
 end;
 
 implementation
 
-uses Classes;
+uses Classes, Controls, SysUtils;
 
 { TLensTableControl }
 
@@ -37,6 +39,28 @@ PaintBox:=aPaintBox;
 PaintBox.OnPaint:=Self.OnPaintBox;
 Header.OnResize:=Self.OnHeaderResize;
 Header.OnSectionResize:=Self.OnHeaderSectionResize;
+Header.OnSectionClick:=Self.OnHeaderClick;
+end;
+
+procedure TLensTableControl.OnHeaderClick;
+var ColNo: TColIndex;
+begin
+// sort data
+TableData.SortByColumnNo(Section.Index);
+
+
+// change header state
+for ColNo:=0 to TableData.getColCount-1 do
+  if ColNo<>Section.Index then
+    Header.Sections[ColNo].ImageIndex:=-1
+  else
+    If TableData.getColumnInfo(Section.Index).SortMode=csmAscending then
+      Section.ImageIndex:=0
+    else
+      Section.ImageIndex:=1;
+
+// repaint
+PaintBox.Repaint;
 end;
 
 procedure TLensTableControl.OnHeaderResize(Sender: TObject);
@@ -87,27 +111,58 @@ end;
 procedure TLensTableControl.PaintGradientColumn;
 var
   BarLeftX, BarRightX: word;
-  BarTopY, BarBottomY: word;
+  BarTopY, BarBottomY: Double;
   RowNo: TRowIndex;
   Cell:PDataCell;
   BarHeight: Double;
+  BarHeightCollected: Double;
+  DataCollected: TFloat;
+  DataCollectedCount: TRowIndex;
+  AvgData: TFloat;
 begin
+if TableData.getRowCount<1 then
+  exit;
+
 Box.Canvas.Pen.Color:=clBlue;
 Box.Canvas.Brush.Color:=clBlue;
 
 BarLeftX:=Header.Sections[ColNo].Left;
 
+BarHeight:=Box.Height/TableData.getRowCount;
+BarHeightCollected:=0;
+DataCollected:=0;
+DataCollectedCount:=0;
+
+BarTopY:=0;
+
 for RowNo:=0 to TableData.getRowCount-1 do
   begin
   Cell:=TableData.getByRC(RowNo, ColNo);
+  if Cell.VisualValue>1 then
+    raise Exception.Create('Что-то не так с данными');
 
-  BarTopY:=Round(RowNo*(PaintBox.Height/TableData.getRowCount));
-  BarBottomY:=Round((RowNo+1)*(PaintBox.Height/TableData.getRowCount));
+  BarHeightCollected:=BarHeightCollected+BarHeight;
+  DataCollected:=DataCollected+Cell.VisualValue;
+  inc(DataCollectedCount);
 
-  BarRightX:=BarLeftX+Round((Header.Sections[ColNo].Width-1) * Cell.VisualValue);
+  // decide whether we have data rows enough to paint it
+  if BarHeightCollected>=1 then
+    begin
+    BarBottomY:=BarTopY+BarHeightCollected;
 
-  Box.Canvas.Rectangle(BarLeftX, BarTopY, BarRightX, BarBottomY);
-  end;
+    AvgData:=DataCollected/DataCollectedCount;
+    BarRightX:=BarLeftX+Round((Header.Sections[ColNo].Width-1) * AvgData);
+
+    Box.Canvas.Rectangle(BarLeftX, Floor(BarTopY), BarRightX, Floor(BarBottomY));
+
+    BarTopY:=BarBottomY;
+
+    // reset counters
+    DataCollected:=0;
+    DataCollectedCount:=0;
+    BarHeightCollected:=0;
+    end; // if
+  end; // for
 end;
 
 procedure TLensTableControl.PrepareLensTable;
@@ -120,6 +175,7 @@ for sectionIndex:=0 to TableData.getColCount-1 do
   begin
   newSection:=THeaderSection.Create(Header.Sections);
   newSection.Text:=TableData.getColumnInfo(sectionIndex).Title;
+  newSection.Alignment:=taCenter;
   end;
 
 Header.OnResize(Header);

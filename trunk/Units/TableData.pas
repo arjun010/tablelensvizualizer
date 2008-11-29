@@ -8,13 +8,15 @@ type
   TRowIndex=LongWord;
   TFloat=Currency;
   TColumnDataType=(ctString, ctNumeric);
+  TColumnSortMode=(csmNone, csmAscending, csmDescending);
+  TString=ShortString;
   TDataCell=record
-    OriginalValue: string;
+    OriginalValue: TString;
     NumericValue: TFloat;
     VisualValue: TFloat;
   end;
   PDataCell=^TDataCell;
-  TStringArray=array of string;
+  TStringArray=array of TString;
 
   TColumnInfo=record
     Title: string;
@@ -22,6 +24,7 @@ type
     Cardinality: LongWord;
     UniqueSet: TStringArray;
     MaxVal: TFloat;
+    SortMode: TColumnSortMode;
   end;
 
   TDataRow=array of TDataCell;
@@ -39,6 +42,7 @@ type
     procedure analyzeColumnTypes;
     procedure analyzeColumnsPass1;
     procedure analyzeColumnsPass2;
+    procedure SortByColumnNo(ColToSort: TColIndex);
   private
     Rows: array of TDataRow;
     ColumnInfo: array of TColumnInfo;
@@ -102,6 +106,12 @@ if ColumnIndex>Length(ColumnInfo)-1 then
   raise Exception.Create('Индекс столбца больше чем количество столбцов')
 else
   Result:=addr(Row[ColumnIndex]);
+
+if (Row[ColumnIndex].VisualValue<0) or (Row[ColumnIndex].VisualValue>1) then
+  raise Exception.Create('Что-то не так с данными, 1');
+
+if (Result.VisualValue<0) or (Result.VisualValue>1) then
+  raise Exception.Create('Что-то не так с данными, 2');
 end;
 
 function TDataTable.getColCount: TColIndex;
@@ -211,10 +221,12 @@ for ColNo:=0 to Length(ColumnInfo)-1 do
   for RowNo:=0 to Length(Rows)-1 do
     begin
     Cell:=addr(Rows[RowNo][ColNo]);
+
     if ColumnInfo[ColNo].MaxVal<>0 then
       Cell.VisualValue:=Cell.NumericValue/ColumnInfo[ColNo].MaxVal
     else
       Cell.VisualValue:=0;
+
     if (Cell.VisualValue<0) or (Cell.VisualValue>1) then
       raise Exception.Create('Недопустимый диапазон для значения VisualValue');
     end;
@@ -224,6 +236,25 @@ procedure TDataTable.Clear;
 begin
 SetLength(Rows, 0);
 SetLength(ColumnInfo, 0);
+end;
+
+procedure TDataTable.SortByColumnNo;
+var ColIndex: TColIndex;
+begin
+// reset old sorted columns
+for ColIndex:=0 to Length(ColumnInfo)-1 do
+  if ColIndex<>ColToSort then
+    ColumnInfo[ColIndex].SortMode:=csmNone;
+
+// choose sort mode
+if ColumnInfo[ColToSort].SortMode=csmAscending then
+  ColumnInfo[ColToSort].SortMode:=csmDescending
+else
+  ColumnInfo[ColToSort].SortMode:=csmAscending;
+
+// do sort
+
+// TODO: do sort
 end;
 
 end.

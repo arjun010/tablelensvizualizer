@@ -15,7 +15,7 @@ uses
   Controls,
   Forms,
   Dialogs,
-  Classes, StdCtrls, Buttons;
+  Classes, StdCtrls, Buttons, ImgList;
 
 type
   TMainForm = class(TForm)
@@ -37,6 +37,7 @@ type
     BitBtn1: TBitBtn;
     BitBtn2: TBitBtn;
     BitBtn3: TBitBtn;
+    HeaderImages: TImageList;
     procedure FormCreate(Sender: TObject);
     procedure btnLoadClick(Sender: TObject);
     procedure btnFillGridClick(Sender: TObject);
@@ -118,7 +119,7 @@ begin
   TableData.analyzeColumnsPass1;
   TableData.analyzeColumnsPass2;
 
-  btnFillGrid.Click;
+  //btnFillGrid.Click;
 
   TableLensControl.PrepareLensTable;
 end;
