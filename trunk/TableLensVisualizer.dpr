@@ -8,7 +8,8 @@ uses
   LensTableControl in 'Units\LensTableControl.pas',
   Logger in 'Units\Logger.pas',
   MainFormUnit in 'Units\MainFormUnit.pas' {MainForm},
-  TableData in 'Units\TableData.pas';
+  TableData in 'Units\TableData.pas',
+  QuickSorter in 'Units\QuickSorter.pas';
 
 {$R *.res}
 
