@@ -32,7 +32,7 @@ type
     procedure SetCellByRC(RowIndex: TRowIndex;  ColumnIndex:TColIndex; Value:TDataCell);
     procedure SetOriginalValueByRC(RowIndex: TRowIndex;  ColumnIndex:TColIndex; Value:String);
     procedure setColumnTitle(ColNo: TColIndex; Title: String);
-    function  getByRC(RowIndex: TRowIndex; ColumnIndex: TColIndex): TDataCell;
+    function  getByRC(RowIndex: TRowIndex; ColumnIndex: TColIndex): PDataCell;
     function  getRowCount(): TRowIndex;
     function  getColCount(): TColIndex;
     function  getColumnInfo(ColNo: TColIndex):TColumnInfo;
@@ -101,7 +101,7 @@ else
 if ColumnIndex>Length(ColumnInfo)-1 then
   raise Exception.Create('Индекс столбца больше чем количество столбцов')
 else
-  Result:=Row[ColumnIndex];
+  Result:=addr(Row[ColumnIndex]);
 end;
 
 function TDataTable.getColCount: TColIndex;

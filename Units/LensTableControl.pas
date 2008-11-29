@@ -67,14 +67,29 @@ if Header.Sections.Count>0 then
 end;
 
 procedure TLensTableControl.PaintColumn;
-var ColLeftX, ColRightX: word;
+var
+  BarLeftX, BarRightX: word;
+  BarTopY, BarBottomY: word;
+  RowNo: TRowIndex;
+  Cell:PDataCell;
 begin
-ColLeftX:=Header.Sections[ColNo].Left;
-ColRightX:=ColLeftX+Header.Sections[ColNo].Width;
+BarLeftX:=Header.Sections[ColNo].Left;
 
-Box.Canvas.Pen.Color:=clRed;
+Box.Canvas.Pen.Color:=clBlue;
 Box.Canvas.Brush.Color:=clBlue;
-Box.Canvas.Rectangle(ColLeftX, 0, ColRightX, Box.Height);
+
+for RowNo:=0 to TableData.getRowCount-1 do
+  begin
+  Cell:=TableData.getByRC(RowNo, ColNo);
+
+  BarTopY:=Round(RowNo*(PaintBox.Height/TableData.getRowCount));
+  BarBottomY:=Round((RowNo+1)*(PaintBox.Height/TableData.getRowCount));
+
+  BarRightX:=BarLeftX+Round(Header.Sections[ColNo].Width * Cell.VisualValue);
+
+  Box.Canvas.Rectangle(BarLeftX, BarTopY, BarRightX, BarBottomY);
+  end;
+
 end;
 
 procedure TLensTableControl.PrepareLensTable;
