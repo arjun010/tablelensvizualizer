@@ -48,7 +48,7 @@ object MainForm: TMainForm
         object GridImage: TPaintBox
           Left = 1
           Top = 20
-          Width = 622
+          Width = 592
           Height = 237
           Align = alClient
         end
@@ -65,6 +65,23 @@ object MainForm: TMainForm
           Images = HeaderImages
           Sections = <>
           ParentFont = False
+        end
+        object ViewZoomBar: TTrackBar
+          Left = 593
+          Top = 20
+          Width = 30
+          Height = 237
+          Align = alRight
+          Max = 100
+          Min = 1
+          Orientation = trVertical
+          PageSize = 10
+          Frequency = 10
+          Position = 100
+          TabOrder = 1
+          ThumbLength = 10
+          TickMarks = tmBoth
+          OnChange = ViewZoomBarChange
         end
       end
     end
@@ -142,8 +159,8 @@ object MainForm: TMainForm
     end
   end
   object MainMenu: TMainMenu
-    Left = 150
-    Top = 70
+    Left = 102
+    Top = 30
     object itmFile: TMenuItem
       Caption = #1060#1072#1081#1083
       object itmLoadFromFile: TMenuItem
@@ -156,9 +173,9 @@ object MainForm: TMainForm
   end
   object HeaderImages: TImageList
     Left = 233
-    Top = 72
+    Top = 40
     Bitmap = {
-      494C010102000400040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010102000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -294,6 +311,7 @@ object MainForm: TMainForm
       81079F0700000000FF07FE030000000083078C010000000083078C0100000000
       FF07FF070000000087078707000000008707870700000000FF07FF0700000000
       8C018307000000008C01830700000000FE03FF07000000009F07810700000000
-      9F8F810700000000FFFFFFFF00000000}
+      9F8F810700000000FFFFFFFF0000000000000000000000000000000000000000
+      000000000000}
   end
 end

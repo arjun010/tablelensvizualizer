@@ -12,10 +12,12 @@ type TLensTableControl=class
   public
     constructor Create(aPaintBox: TPaintBox; aHeader: THeaderControl; aTableData: TDataTable);
     procedure PrepareLensTable;
+    procedure setViewPercent(Percent: Integer);
   private
     PaintBox: TPaintBox;
     Header: THeaderControl;
     TableData: TDataTable;
+    ViewPercent: Integer;
     procedure OnPaintBox(Sender: TObject);
     procedure PaintColumn(Box: TPaintBox; ColNo: TColIndex);
     procedure OnHeaderResize(Sender: TObject);
@@ -40,6 +42,8 @@ PaintBox.OnPaint:=Self.OnPaintBox;
 Header.OnResize:=Self.OnHeaderResize;
 Header.OnSectionResize:=Self.OnHeaderSectionResize;
 Header.OnSectionClick:=Self.OnHeaderClick;
+
+ViewPercent:=100;
 end;
 
 procedure TLensTableControl.OnHeaderClick;
@@ -119,23 +123,26 @@ var
   DataCollected: TFloat;
   DataCollectedCount: TRowIndex;
   AvgData: TFloat;
+  RowsLimit: TRowIndex;
 begin
 if TableData.getRowCount<1 then
   exit;
+
+RowsLimit:=Floor(TableData.getRowCount*(ViewPercent/100));
 
 Box.Canvas.Pen.Color:=clBlue;
 Box.Canvas.Brush.Color:=clBlue;
 
 BarLeftX:=Header.Sections[ColNo].Left;
 
-BarHeight:=Box.Height/TableData.getRowCount;
+BarHeight:=Box.Height/RowsLimit;
 BarHeightCollected:=0;
 DataCollected:=0;
 DataCollectedCount:=0;
 
 BarTopY:=0;
 
-for RowNo:=0 to TableData.getRowCount-1 do
+for RowNo:=0 to RowsLimit-1 do
   begin
   Cell:=TableData.getByRC(RowNo, ColNo);
   if Cell.VisualValue>1 then
@@ -179,6 +186,12 @@ for sectionIndex:=0 to TableData.getColCount-1 do
   end;
 
 Header.OnResize(Header);
+end;
+
+procedure TLensTableControl.setViewPercent(Percent: Integer);
+begin
+ViewPercent:=Percent;
+PaintBox.Repaint;
 end;
 
 end.

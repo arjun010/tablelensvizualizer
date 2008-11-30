@@ -38,12 +38,15 @@ type
     BitBtn2: TBitBtn;
     BitBtn3: TBitBtn;
     HeaderImages: TImageList;
+    ViewZoomBar: TTrackBar;
     procedure FormCreate(Sender: TObject);
     procedure btnLoadClick(Sender: TObject);
     procedure btnFillGridClick(Sender: TObject);
     procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
     procedure BitBtn3Click(Sender: TObject);
+    procedure ViewZoomBarChange(Sender: TObject);
+    procedure BitBtn4Click(Sender: TObject);
   private
     TableData:TDataTable;
     FileLoader:TCSVFileLoader;
@@ -142,6 +145,18 @@ end;
 procedure TMainForm.BitBtn3Click(Sender: TObject);
 begin
   LoadFile('test perfdata.csv');
+end;
+
+procedure TMainForm.ViewZoomBarChange(Sender: TObject);
+begin
+TableLensControl.setViewPercent(TrackBar1.Position);
+//TrackBar1.SelStart:=(TrackBar1.Position);
+//TrackBar1.SelEnd:=(TrackBar1.Max);
+end;
+
+procedure TMainForm.BitBtn4Click(Sender: TObject);
+begin
+  LoadFile('allcolumns.csv');
 end;
 
 end.
