@@ -149,7 +149,7 @@ end;
 
 procedure TMainForm.ViewZoomBarChange(Sender: TObject);
 begin
-TableLensControl.setViewPercent(TrackBar1.Position);
+TableLensControl.setViewPercent(ViewZoomBar.Position);
 //TrackBar1.SelStart:=(TrackBar1.Position);
 //TrackBar1.SelEnd:=(TrackBar1.Max);
 end;
