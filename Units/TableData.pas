@@ -247,10 +247,10 @@ for ColIndex:=0 to Length(ColumnInfo)-1 do
     ColumnInfo[ColIndex].SortMode:=csmNone;
 
 // choose sort mode
-if ColumnInfo[ColToSort].SortMode=csmAscending then
-  ColumnInfo[ColToSort].SortMode:=csmDescending
+if ColumnInfo[ColToSort].SortMode=csmDescending then
+  ColumnInfo[ColToSort].SortMode:=csmAscending
 else
-  ColumnInfo[ColToSort].SortMode:=csmAscending;
+  ColumnInfo[ColToSort].SortMode:=csmDescending;
 
 // do sort
 TQuickSorter.SortRows(Rows, ColToSort, ColumnInfo[ColToSort].SortMode);
