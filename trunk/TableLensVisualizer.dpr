@@ -1,7 +1,5 @@
 program TableLensVisualizer;
 
-
-
 uses
   Forms,
   CSVFileLoader in 'Units\CSVFileLoader.pas',
@@ -11,7 +9,8 @@ uses
   TableData in 'Units\TableData.pas',
   QuickSorter in 'Units\QuickSorter.pas',
   ColorsPalette in 'Units\ColorsPalette.pas',
-  CommonTypes in 'Units\CommonTypes.pas';
+  CommonTypes in 'Units\CommonTypes.pas',
+  OpenData in 'Units\OpenData.pas' {frmOpenData};
 
 {$R *.res}
 
