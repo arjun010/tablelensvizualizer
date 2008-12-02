@@ -1,6 +1,6 @@
 object MainForm: TMainForm
-  Left = 196
-  Top = 347
+  Left = 271
+  Top = 362
   AutoScroll = False
   Caption = 'MainForm'
   ClientHeight = 305
@@ -81,7 +81,6 @@ object MainForm: TMainForm
           TabOrder = 1
           ThumbLength = 10
           TickMarks = tmBoth
-          OnChange = ViewZoomBarChange
         end
       end
     end
@@ -172,8 +171,8 @@ object MainForm: TMainForm
     end
   end
   object HeaderImages: TImageList
-    Left = 233
-    Top = 40
+    Left = 139
+    Top = 30
     Bitmap = {
       494C010102000400040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000001000000001002000000000000010

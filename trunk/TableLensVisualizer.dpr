@@ -9,7 +9,9 @@ uses
   Logger in 'Units\Logger.pas',
   MainFormUnit in 'Units\MainFormUnit.pas' {MainForm},
   TableData in 'Units\TableData.pas',
-  QuickSorter in 'Units\QuickSorter.pas';
+  QuickSorter in 'Units\QuickSorter.pas',
+  ColorsPalette in 'Units\ColorsPalette.pas',
+  CommonTypes in 'Units\CommonTypes.pas';
 
 {$R *.res}
 

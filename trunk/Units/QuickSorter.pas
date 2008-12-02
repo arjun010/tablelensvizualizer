@@ -1,7 +1,7 @@
 unit QuickSorter;
 
 interface
-uses TableData;
+uses TableData, CommonTypes;
 
 type
   TQuickSorter=class
