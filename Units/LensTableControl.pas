@@ -157,8 +157,6 @@ BarTopY:=0;
 for RowNo:=0 to RowsLimit-1 do
   begin
   Cell:=TableData.getByRC(RowNo, ColNo);
-  if Cell.VisualValue>1 then
-    raise Exception.Create('Что-то не так с данными');
 
   BarHeightCollected:=BarHeightCollected+BarHeight;
   DataCollected:=DataCollected+Cell.VisualValue;
@@ -186,56 +184,42 @@ end;
 
 procedure TLensTableControl.PaintBarsColumn;
 var
-  BarLeftX, BarRightX: word;
   BarTopY, BarBottomY: Double;
   RowNo: TRowIndex;
   Cell:PDataCell;
-  BarHeight: Double;
+  BarLeftX, BarHeight, BarWidth: Double;
   BarHeightCollected: Double;
-  DataCollected: TFloat;
-  DataCollectedCount: TRowIndex;
-  AvgData: TFloat;
   RowsLimit: TRowIndex;
 begin
 RowsLimit:=Floor(TableData.getRowCount*(ViewPercent.Position/100));
 
-BarLeftX:=Header.Sections[ColNo].Left;
-
 BarHeight:=Box.Height/RowsLimit;
+BarWidth:=Header.Sections[ColNo].Width/TableData.getColumnInfo(ColNo).Cardinality;
 BarHeightCollected:=0;
-DataCollected:=0;
-DataCollectedCount:=0;
 
 BarTopY:=0;
 
 for RowNo:=0 to RowsLimit-1 do
   begin
   Cell:=TableData.getByRC(RowNo, ColNo);
-  if Cell.VisualValue>1 then
-    raise Exception.Create('Что-то не так с данными');
 
   BarHeightCollected:=BarHeightCollected+BarHeight;
-  DataCollected:=DataCollected+Cell.VisualValue;
-  inc(DataCollectedCount);
 
   // decide whether we have data rows enough to paint it
   if BarHeightCollected>=1 then
     begin
     BarBottomY:=BarTopY+BarHeightCollected;
 
-    AvgData:=DataCollected/DataCollectedCount;
-    BarRightX:=BarLeftX+Round((Header.Sections[ColNo].Width-1) * AvgData);
+    BarLeftX:=Header.Sections[ColNo].Left;
 
     Box.Canvas.Pen.Color:=TableData.getColumnInfo(ColNo).Palette.getColorForValue(Cell.OriginalValue);
     Box.Canvas.Brush.Color:=Box.Canvas.Pen.Color;
 
-    Box.Canvas.Rectangle(BarLeftX, Floor(BarTopY), BarRightX, Floor(BarBottomY));
+    Box.Canvas.Rectangle(Round(BarLeftX), Floor(BarTopY), Round(BarLeftX+BarWidth), Floor(BarBottomY));
 
     BarTopY:=BarBottomY;
 
     // reset counters
-    DataCollected:=0;
-    DataCollectedCount:=0;
     BarHeightCollected:=0;
     end; // if
   end; // for
