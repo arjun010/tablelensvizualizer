@@ -146,6 +146,7 @@ begin
 if Length(ColumnInfo)<(ColNo+1) then
   begin
   SetLength(ColumnInfo, ColNo+1);
+  ColumnInfo[ColNo].Palette:=TColorsPalette.Create;
   end;
 
 ColumnInfo[ColNo].Title:=Title;
