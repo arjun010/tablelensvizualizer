@@ -8,8 +8,8 @@ type TColorsPalette=class
     Values: array of TString;
     Colors: array of TColor;
   public
-    constructor Create;
     function getColorForValue(Value: TString): TColor;
+    function getIndexForValue(Value: TString): TRowIndex;
 end;
 
 implementation
@@ -41,12 +41,6 @@ uses Math;
 
 { TColorsPalette }
 
-constructor TColorsPalette.Create;
-begin
-SetLength(Values, 0);
-SetLength(Colors, 0);
-end;
-
 function TColorsPalette.getColorForValue(Value: TString): TColor;
 var ValueIndex: TRowIndex;
 begin
@@ -71,6 +65,23 @@ else
   Colors[length(Colors)-1]:=Random(MaxLongint)-MaxInt;
 
 Result:=Colors[length(Colors)-1];
+end;
+
+function TColorsPalette.getIndexForValue(Value: TString): TRowIndex;
+var ValueIndex: TRowIndex;
+begin
+ValueIndex:=0;
+while ValueIndex<TRowIndex(Length(Values)) do
+  begin
+  if Values[ValueIndex]=Value then
+    begin
+    Result:=ValueIndex;
+    exit;
+    end;
+  inc(ValueIndex);
+  end;
+
+result:=Length(Values);
 end;
 
 end.

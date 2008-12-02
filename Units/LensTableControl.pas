@@ -210,7 +210,7 @@ for RowNo:=0 to RowsLimit-1 do
     begin
     BarBottomY:=BarTopY+BarHeightCollected;
 
-    BarLeftX:=Header.Sections[ColNo].Left;
+    BarLeftX:=Header.Sections[ColNo].Left+BarWidth*TableData.getColumnInfo(ColNo).Palette.getIndexForValue(Cell.OriginalValue);
 
     Box.Canvas.Pen.Color:=TableData.getColumnInfo(ColNo).Palette.getColorForValue(Cell.OriginalValue);
     Box.Canvas.Brush.Color:=Box.Canvas.Pen.Color;
