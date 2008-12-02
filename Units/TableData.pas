@@ -1,7 +1,7 @@
 unit TableData;
 
 interface
-uses Logger, SysUtils, CommonTypes, ColorsPalette;
+uses SysUtils, CommonTypes, ColorsPalette;
 
 type
   TColumnInfo=record
@@ -17,7 +17,7 @@ type
 
   TDataTable=class
   public
-    constructor Create(aLogger:TLogger);
+    constructor Create;
     procedure Clear;
     procedure SetCellByRC(RowIndex: TRowIndex;  ColumnIndex:TColIndex; Value:TDataCell);
     procedure SetOriginalValueByRC(RowIndex: TRowIndex;  ColumnIndex:TColIndex; Value:String);
@@ -32,7 +32,6 @@ type
   private
     Rows: array of TDataRow;
     ColumnInfo: array of TColumnInfo;
-    Logger:TLogger;
     GradientCardinalityLimit: TRowIndex;
     function IsNumeric(S: string): boolean;
     procedure PutUniqueValueInArray(Value: string; var StrArray: TStringArray);
@@ -83,7 +82,6 @@ end;
 
 constructor TDataTable.Create;
 begin
-Logger:=aLogger;
 GradientCardinalityLimit:=20;
 end;
 
@@ -91,20 +89,20 @@ function TDataTable.getByRC;
 var Row:TDataRow;
 begin
 if RowIndex>TRowIndex(Length(Rows))-1 then
-  raise Exception.Create('Индекс строки больше чем количество строк')
+  raise Exception.Create('Row index exceeds rows count')
 else
   Row:=Rows[RowIndex];
 
 if ColumnIndex>Length(ColumnInfo)-1 then
-  raise Exception.Create('Индекс столбца больше чем количество столбцов')
+  raise Exception.Create('Column index exceeds column count')
 else
   Result:=addr(Row[ColumnIndex]);
 
 if (Row[ColumnIndex].VisualValue<0) or (Row[ColumnIndex].VisualValue>1) then
-  raise Exception.Create('Что-то не так с данными, 1');
+  raise Exception.Create('The data is broken, v.1');
 
 if (Result.VisualValue<0) or (Result.VisualValue>1) then
-  raise Exception.Create('Что-то не так с данными, 2');
+  raise Exception.Create('The data is broken, v.2');
 end;
 
 function TDataTable.getColCount: TColIndex;
@@ -115,7 +113,7 @@ end;
 function TDataTable.getColumnInfo(ColNo: TColIndex): TColumnInfo;
 begin
 if ColNo>Length(ColumnInfo)-1 then
-  raise Exception.Create('Индекс столбца больше чем количество столбцов');
+  raise Exception.Create('Column index exceeds column count');
 Result:=ColumnInfo[ColNo];
 end;
 
@@ -208,7 +206,7 @@ for ColNo:=0 to Length(ColumnInfo)-1 do
     ColumnInfo[ColNo].Cardinality:=length(ColumnInfo[ColNo].UniqueSet);
 
     if ColumnInfo[ColNo].Cardinality<1 then
-      raise Exception.Create('Уникальных значений должно быть не меньше 1');
+      raise Exception.Create('Unique values count must be more than 1');
 
     if ColumnInfo[ColNo].Cardinality=1 then
       ColumnInfo[ColNo].VisualType:=cvtSkip
@@ -274,7 +272,7 @@ for ColNo:=0 to Length(ColumnInfo)-1 do
       Cell.VisualValue:=0;
 
     if (Cell.VisualValue<0) or (Cell.VisualValue>1) then
-      raise Exception.Create('Недопустимый диапазон для значения VisualValue');
+      raise Exception.Create('Illegal VisualValue range');
     end;
 end;
 
