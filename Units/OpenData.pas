@@ -8,29 +8,27 @@ uses
 
 type
   TfrmOpenData = class(TForm)
-    PageControl1: TPageControl;
+    pcLoadMethods: TPageControl;
     tabOpenCSV: TTabSheet;
-    tabOpenExcel: TTabSheet;
-    tabSQLServer: TTabSheet;
-    Edit1: TEdit;
-    Panel1: TPanel;
-    Panel2: TPanel;
-    Button1: TButton;
-    Panel3: TPanel;
-    Button2: TButton;
-    Button3: TButton;
+    edFileName: TEdit;
+    pnlCSVControls: TPanel;
+    pnlCSVSteps: TPanel;
+    btnBrowse: TButton;
+    pnlConfirm: TPanel;
+    btnLoad: TButton;
+    btnCancel: TButton;
     StringGrid1: TStringGrid;
-    GroupBox1: TGroupBox;
-    Label1: TLabel;
-    Label2: TLabel;
-    GroupBox2: TGroupBox;
-    Label3: TLabel;
+    grpPreview: TGroupBox;
+    lblPreview: TLabel;
+    lblFile: TLabel;
+    grpParseOptions: TGroupBox;
+    lblOptions: TLabel;
     Label4: TLabel;
-    CheckBox1: TCheckBox;
-    RadioButton1: TRadioButton;
-    RadioButton2: TRadioButton;
-    RadioButton3: TRadioButton;
-    Label5: TLabel;
+    cbHeaders: TCheckBox;
+    rbTab: TRadioButton;
+    rbComma: TRadioButton;
+    rbDotComma: TRadioButton;
+    lblSeparator: TLabel;
   private
     { Private declarations }
   public

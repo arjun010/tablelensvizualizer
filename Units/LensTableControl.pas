@@ -47,6 +47,10 @@ Header.OnResize:=Self.OnHeaderResize;
 Header.OnSectionResize:=Self.OnHeaderSectionResize;
 Header.OnSectionClick:=Self.OnHeaderClick;
 ViewPercent.OnChange:=OnViewZoomBarChange;
+
+Header.Enabled:=false;
+PaintBox.Enabled:=false;
+ViewPercent.Enabled:=false;
 end;
 
 procedure TLensTableControl.OnHeaderClick;
@@ -241,6 +245,10 @@ for sectionIndex:=0 to TableData.getColCount-1 do
   end;
 
 Header.OnResize(Header);
+
+Header.Enabled:=false;
+PaintBox.Enabled:=false;
+ViewPercent.Enabled:=false;
 end;
 
 end.
