@@ -4,7 +4,6 @@ interface
 
 uses
   OpenData,
-  Logger,
   CSVFileLoader,
   TableData,
   LensTableControl,
@@ -38,14 +37,11 @@ type
   private
     TableData:TDataTable;
     FileLoader:TCSVFileLoader;
-    Logger:TLogger;
     TableLensControl:TLensTableControl;
     OpenForm: TfrmOpenData;
-
-    procedure LoadCSVFile(fname: string);
-
     { Private declarations }
   public
+    procedure LoadCSVFile(fname: string);
     { Public declarations }
   end;
 
@@ -58,11 +54,9 @@ implementation
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  Logger:=TLogger.Create(Application.ExeName);
-
   FileLoader:=TCSVFileLoader.Create;
 
-  TableData:=TDataTable.create(Logger);
+  TableData:=TDataTable.create;
 
   TableLensControl:=TLensTableControl.Create(GridImage, GridHeader, ViewZoomBar, TableData);
 end;
@@ -76,7 +70,7 @@ begin
   try
    FileLoader.Load(Fname, TableData);
   except
-    on e:EOutOfMemory do ShowMessage('Файл слишком велик');
+    on e:EOutOfMemory do ShowMessage('File too large');
   end;
 
   TableData.analyzeColumns;

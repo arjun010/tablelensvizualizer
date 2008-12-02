@@ -13,6 +13,7 @@ object frmOpenData: TfrmOpenData
   Font.Style = []
   OldCreateOrder = False
   Position = poMainFormCenter
+  OnCreate = FormCreate
   PixelsPerInch = 96
   TextHeight = 13
   object pcLoadMethods: TPageControl
@@ -37,7 +38,7 @@ object frmOpenData: TfrmOpenData
         DesignSize = (
           487
           343)
-        object Label4: TLabel
+        object lblFilePath: TLabel
           Left = 10
           Top = 18
           Width = 47
@@ -51,6 +52,7 @@ object frmOpenData: TfrmOpenData
           Height = 21
           Anchors = [akLeft, akTop, akRight]
           TabOrder = 0
+          OnChange = edFileNameChange
         end
         object btnBrowse: TButton
           Left = 401
@@ -60,6 +62,7 @@ object frmOpenData: TfrmOpenData
           Anchors = [akTop, akRight]
           Caption = 'Browse...'
           TabOrder = 1
+          OnClick = btnBrowseClick
         end
         object grpPreview: TGroupBox
           Left = 0
@@ -106,6 +109,7 @@ object frmOpenData: TfrmOpenData
             Checked = True
             State = cbChecked
             TabOrder = 0
+            OnClick = cbHeadersClick
           end
           object rbTab: TRadioButton
             Left = 40
@@ -116,6 +120,7 @@ object frmOpenData: TfrmOpenData
             Checked = True
             TabOrder = 1
             TabStop = True
+            OnClick = rbTabClick
           end
           object rbComma: TRadioButton
             Left = 40
@@ -124,6 +129,7 @@ object frmOpenData: TfrmOpenData
             Height = 17
             Caption = 'Comma'
             TabOrder = 2
+            OnClick = rbTabClick
           end
           object rbDotComma: TRadioButton
             Left = 40
@@ -132,6 +138,7 @@ object frmOpenData: TfrmOpenData
             Height = 17
             Caption = 'Dot-Comma'
             TabOrder = 3
+            OnClick = rbTabClick
           end
         end
       end
@@ -206,6 +213,7 @@ object frmOpenData: TfrmOpenData
       Default = True
       Enabled = False
       TabOrder = 0
+      OnClick = btnLoadClick
     end
     object btnCancel: TButton
       Left = 572
@@ -216,6 +224,12 @@ object frmOpenData: TfrmOpenData
       Cancel = True
       Caption = 'Cancel'
       TabOrder = 1
+      OnClick = btnCancelClick
     end
+  end
+  object dlgOpenCSV: TOpenDialog
+    Filter = '*.tsv, *.csv, *.txt|*.tsv; *.csv; *.txt|All|*.*'
+    Left = 294
+    Top = 34
   end
 end
