@@ -1,23 +1,9 @@
 unit TableData;
 
 interface
-uses Logger, SysUtils;
+uses Logger, SysUtils, CommonTypes, ColorsPalette;
 
 type
-  TColumnSortMode=(csmNone, csmAscending, csmDescending);
-  TColIndex=byte;
-  TRowIndex=LongWord;
-  TFloat=Currency;
-  TColumnDataType=(ctString, ctNumeric);
-  TString=ShortString;
-  TDataCell=record
-    OriginalValue: TString;
-    NumericValue: TFloat;
-    VisualValue: TFloat;
-  end;
-  PDataCell=^TDataCell;
-  TStringArray=array of TString;
-
   TColumnInfo=record
     Title: string;
     ColType: TColumnDataType;
@@ -25,9 +11,10 @@ type
     UniqueSet: TStringArray;
     MaxVal: TFloat;
     SortMode: TColumnSortMode;
+    VisualType: TColumnVisualType;
+    Palette: TColorsPalette;
   end;
 
-  TDataRow=array of TDataCell;
   TDataTable=class
   public
     constructor Create(aLogger:TLogger);
@@ -39,16 +26,21 @@ type
     function  getRowCount(): TRowIndex;
     function  getColCount(): TColIndex;
     function  getColumnInfo(ColNo: TColIndex):TColumnInfo;
-    procedure analyzeColumnTypes;
-    procedure analyzeColumnsPass1;
-    procedure analyzeColumnsPass2;
     procedure SortByColumnNo(ColToSort: TColIndex);
+    procedure analyzeColumns;
+    procedure setCardinalityLimit(Limit: TRowIndex);
   private
     Rows: array of TDataRow;
     ColumnInfo: array of TColumnInfo;
     Logger:TLogger;
+    GradientCardinalityLimit: TRowIndex;
     function IsNumeric(S: string): boolean;
     procedure PutUniqueValueInArray(Value: string; var StrArray: TStringArray);
+    procedure CalculateNumerics(ColNo: TColIndex; Cell: PDataCell);
+    procedure CalculateMaxVal(ColNo: TColIndex; NumValue: TFloat);
+    procedure analyzeColumnTypes;
+    procedure analyzeColumnsPass1;
+    procedure analyzeColumnsPass2;
   end;
 implementation
 
@@ -92,6 +84,7 @@ end;
 constructor TDataTable.Create;
 begin
 Logger:=aLogger;
+GradientCardinalityLimit:=20;
 end;
 
 function TDataTable.getByRC;
@@ -180,6 +173,19 @@ SetLength(StrArray, length(StrArray)+1);
 StrArray[length(StrArray)-1]:=Value;
 end;
 
+procedure TDataTable.CalculateNumerics;
+begin
+    // рассчитаем числовые значения
+    Cell.NumericValue:=0;
+    DecimalSeparator:='.';
+    case ColumnInfo[ColNo].ColType of
+      ctNumeric:
+        Cell.NumericValue:=StrToFloatDef(Cell.OriginalValue, 0);
+      ctString:
+        Cell.NumericValue:=Length(Cell.OriginalValue);
+    end; //case
+end;
+
 procedure TDataTable.analyzeColumnsPass1;
 var
     ColNo: TColIndex;
@@ -193,43 +199,24 @@ for ColNo:=0 to Length(ColumnInfo)-1 do
     Cell:=addr(Rows[RowNo][ColNo]);
     PutUniqueValueInArray(Cell.OriginalValue, ColumnInfo[ColNo].UniqueSet);
 
-    // рассчитаем числовые значения
-    Cell.NumericValue:=0;
-    DecimalSeparator:='.';
-    case ColumnInfo[ColNo].ColType of
-      ctNumeric:
-        Cell.NumericValue:=StrToFloatDef(Cell.OriginalValue, 0);
-      ctString:
-        Cell.NumericValue:=Length(Cell.OriginalValue);
-    end; //case
+    CalculateNumerics(ColNo, Cell);
 
-    // рассчитываем максимальное значение
-    if ColumnInfo[ColNo].MaxVal<Cell.NumericValue then
-      ColumnInfo[ColNo].MaxVal:=Cell.NumericValue;
-    end;
-    Logger.LogStr('Maxval: '+floatToStr(ColumnInfo[ColNo].MaxVal));
-  end;
-end;
+    CalculateMaxVal(ColNo, Cell.NumericValue);
+    end; //rows
 
-procedure TDataTable.analyzeColumnsPass2;
-var
-    ColNo: TColIndex;
-    RowNo: TRowIndex;
-    Cell: PDataCell;
-begin
-for ColNo:=0 to Length(ColumnInfo)-1 do
-  for RowNo:=0 to Length(Rows)-1 do
-    begin
-    Cell:=addr(Rows[RowNo][ColNo]);
+    ColumnInfo[ColNo].Cardinality:=length(ColumnInfo[ColNo].UniqueSet);
 
-    if ColumnInfo[ColNo].MaxVal<>0 then
-      Cell.VisualValue:=Cell.NumericValue/ColumnInfo[ColNo].MaxVal
+    if ColumnInfo[ColNo].Cardinality<1 then
+      raise Exception.Create('Уникальных значений должно быть не меньше 1');
+
+    if ColumnInfo[ColNo].Cardinality=1 then
+      ColumnInfo[ColNo].VisualType:=cvtSkip
     else
-      Cell.VisualValue:=0;
-
-    if (Cell.VisualValue<0) or (Cell.VisualValue>1) then
-      raise Exception.Create('Недопустимый диапазон для значения VisualValue');
-    end;
+      if ColumnInfo[ColNo].Cardinality<GradientCardinalityLimit then
+        ColumnInfo[ColNo].VisualType:=cvtBars
+      else
+        ColumnInfo[ColNo].VisualType:=cvtGradient;
+  end; // cols
 end;
 
 procedure TDataTable.Clear;
@@ -254,6 +241,45 @@ else
 
 // do sort
 TQuickSorter.SortRows(Rows, ColToSort, ColumnInfo[ColToSort].SortMode);
+end;
+
+procedure TDataTable.CalculateMaxVal;
+begin
+// рассчитываем максимальное значение
+if ColumnInfo[ColNo].MaxVal<NumValue then
+  ColumnInfo[ColNo].MaxVal:=NumValue;
+end;
+
+procedure TDataTable.analyzeColumns;
+begin
+analyzeColumnTypes;
+analyzeColumnsPass1;
+analyzeColumnsPass2;
+end;
+
+procedure TDataTable.analyzeColumnsPass2;
+var ColNo: TColIndex;
+  RowNo: TRowIndex;
+  Cell: PDataCell;
+begin
+for ColNo:=0 to Length(ColumnInfo)-1 do
+  for RowNo:=0 to Length(Rows)-1 do
+    begin
+    Cell:=addr(Rows[RowNo][ColNo]);
+
+    if ColumnInfo[ColNo].MaxVal<>0 then
+      Cell.VisualValue:=Cell.NumericValue/ColumnInfo[ColNo].MaxVal
+    else
+      Cell.VisualValue:=0;
+
+    if (Cell.VisualValue<0) or (Cell.VisualValue>1) then
+      raise Exception.Create('Недопустимый диапазон для значения VisualValue');
+    end;
+end;
+
+procedure TDataTable.setCardinalityLimit(Limit: TRowIndex);
+begin
+GradientCardinalityLimit:=Limit;
 end;
 
 end.

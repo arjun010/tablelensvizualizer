@@ -45,8 +45,6 @@ type
     procedure BitBtn1Click(Sender: TObject);
     procedure BitBtn2Click(Sender: TObject);
     procedure BitBtn3Click(Sender: TObject);
-    procedure ViewZoomBarChange(Sender: TObject);
-    procedure BitBtn4Click(Sender: TObject);
   private
     TableData:TDataTable;
     FileLoader:TCSVFileLoader;
@@ -98,7 +96,7 @@ begin
 
   TableData:=TDataTable.create(Logger);
 
-  TableLensControl:=TLensTableControl.Create(GridImage, GridHeader, TableData);
+  TableLensControl:=TLensTableControl.Create(GridImage, GridHeader, ViewZoomBar, TableData);
 end;
 
 procedure TMainForm.btnFillGridClick(Sender: TObject);
@@ -118,12 +116,7 @@ begin
     on e:EOutOfMemory do ShowMessage('Файл слишком велик');
   end;
 
-  TableData.analyzeColumnTypes;
-  TableData.analyzeColumnsPass1;
-  TableData.analyzeColumnsPass2;
-
-  //btnFillGrid.Click;
-
+  TableData.analyzeColumns;
   TableLensControl.PrepareLensTable;
 end;
 
@@ -145,18 +138,6 @@ end;
 procedure TMainForm.BitBtn3Click(Sender: TObject);
 begin
   LoadFile('test perfdata.csv');
-end;
-
-procedure TMainForm.ViewZoomBarChange(Sender: TObject);
-begin
-TableLensControl.setViewPercent(ViewZoomBar.Position);
-//TrackBar1.SelStart:=(TrackBar1.Position);
-//TrackBar1.SelEnd:=(TrackBar1.Max);
-end;
-
-procedure TMainForm.BitBtn4Click(Sender: TObject);
-begin
-  LoadFile('allcolumns.csv');
 end;
 
 end.
