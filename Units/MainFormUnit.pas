@@ -36,12 +36,12 @@ type
     procedure itmLoadDataClick(Sender: TObject);
   private
     TableData: TDataTable;
-    FileLoader:TCSVFileLoader;
     TableLensControl:TLensTableControl;
     OpenForm: TfrmOpenData;
     { Private declarations }
   public
-    procedure LoadCSVFile(fname: string);
+    procedure StartLensTable;
+    function getDataTable: TDataTable;
     { Public declarations }
   end;
 
@@ -54,33 +54,27 @@ implementation
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-  FileLoader:=TCSVFileLoader.Create;
-
   TableData:=TDataTable.create;
 
   TableLensControl:=TLensTableControl.Create(GridImage, GridHeader, ViewZoomBar, TableData);
 end;
 
-procedure TMainForm.LoadCSVFile(fname: string);
+procedure TMainForm.StartLensTable;
 begin
-  if not FileExists(fname) then
-    raise Exception.Create('File not found: '+fname);
-
-  FileLoader.Load(Fname, TableData);
-
-  TableData.analyzeColumns;
-  TableLensControl.PrepareLensTable;
+TableLensControl.PrepareLensTable;
 end;
 
 procedure TMainForm.itmLoadDataClick(Sender: TObject);
 begin
 if OpenForm=nil then
-  begin
   OpenForm:=TfrmOpenData.Create(Self);
-  OpenForm.setDataTable(TableData);
-  end;
 
-OpenForm.ShowModal;
+OpenForm.Show;
+end;
+
+function TMainForm.getDataTable: TDataTable;
+begin
+Result:=TableData;
 end;
 
 end.

@@ -1,17 +1,18 @@
 object frmOpenData: TfrmOpenData
-  Left = 216
-  Top = 121
+  Left = 276
+  Top = 262
   Width = 663
-  Height = 439
+  Height = 440
   BorderStyle = bsSizeToolWin
   Caption = 'Open table data from...'
   Color = clBtnFace
+  Constraints.MaxHeight = 440
+  Constraints.MinHeight = 440
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
@@ -21,7 +22,7 @@ object frmOpenData: TfrmOpenData
     Left = 0
     Top = 0
     Width = 655
-    Height = 371
+    Height = 372
     ActivePage = tabOpenCSV
     Align = alClient
     MultiLine = True
@@ -32,13 +33,13 @@ object frmOpenData: TfrmOpenData
         Left = 160
         Top = 0
         Width = 487
-        Height = 343
+        Height = 344
         Align = alClient
         BevelOuter = bvNone
         TabOrder = 0
         DesignSize = (
           487
-          343)
+          344)
         object lblFilePath: TLabel
           Left = 10
           Top = 18
@@ -67,7 +68,7 @@ object frmOpenData: TfrmOpenData
         end
         object grpPreview: TGroupBox
           Left = 0
-          Top = 171
+          Top = 172
           Width = 487
           Height = 172
           Align = alBottom
@@ -79,10 +80,11 @@ object frmOpenData: TfrmOpenData
             Width = 483
             Height = 155
             Align = alClient
-            ColCount = 10
+            ColCount = 1
             DefaultRowHeight = 18
             FixedCols = 0
-            RowCount = 11
+            RowCount = 2
+            Options = [goFixedVertLine, goFixedHorzLine, goVertLine, goHorzLine, goRangeSelect, goColSizing]
             TabOrder = 0
           end
         end
@@ -107,33 +109,31 @@ object frmOpenData: TfrmOpenData
             Width = 183
             Height = 17
             Caption = 'First line contains column headers'
-            Checked = True
-            State = cbChecked
             TabOrder = 0
             OnClick = cbHeadersClick
           end
           object rbTab: TRadioButton
-            Left = 40
-            Top = 38
-            Width = 113
-            Height = 17
-            Caption = 'Tab'
-            Checked = True
-            TabOrder = 1
-            TabStop = True
-            OnClick = rbTabClick
-          end
-          object rbComma: TRadioButton
-            Left = 40
+            Left = 38
             Top = 78
             Width = 113
             Height = 17
+            Caption = 'Tab'
+            TabOrder = 1
+            OnClick = rbTabClick
+          end
+          object rbComma: TRadioButton
+            Left = 38
+            Top = 38
+            Width = 113
+            Height = 17
             Caption = 'Comma'
+            Checked = True
             TabOrder = 2
+            TabStop = True
             OnClick = rbTabClick
           end
           object rbDotComma: TRadioButton
-            Left = 40
+            Left = 38
             Top = 58
             Width = 113
             Height = 17
@@ -147,7 +147,7 @@ object frmOpenData: TfrmOpenData
         Left = 0
         Top = 0
         Width = 160
-        Height = 343
+        Height = 344
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
@@ -195,7 +195,7 @@ object frmOpenData: TfrmOpenData
   end
   object pnlConfirm: TPanel
     Left = 0
-    Top = 371
+    Top = 372
     Width = 655
     Height = 41
     Align = alBottom

@@ -63,13 +63,15 @@ var
     RowNo: TRowIndex;
     ColType: TColumnDataType;
     StrValue: String;
+    Row: TDataRow;
 begin
 for ColNo:=0 to Length(ColumnInfo)-1 do
   begin
   ColType:=ctNumeric;
   for RowNo:=0 to Length(Rows)-1 do
     begin
-    StrValue:=Rows[RowNo][ColNo].OriginalValue;
+    Row:=Rows[RowNo];
+    StrValue:=Row[ColNo].OriginalValue;
     if not IsNumeric(StrValue) then
       begin
       ColType:=ctString;

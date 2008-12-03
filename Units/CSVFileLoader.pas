@@ -10,8 +10,8 @@ type
   TCSVSeparator=(sepTab, sepComma, sepDotComma);
   TCSVFileLoader=class
   public
-    procedure Load(SrcFile:String; var Dest:TDataTable);
-    procedure LoadWithLimit(SrcFile:String; var Dest:TDataTable; Limit: TRowIndex);
+    procedure Load(SrcFile:String; Dest:TDataTable);
+    procedure LoadWithLimit(SrcFile:String; Dest:TDataTable; Limit: TRowIndex);
     procedure setSeparator(aSeparator: TCSVSeparator);
     procedure setHeaderLine(aIsHeader: boolean);
   private
@@ -20,47 +20,53 @@ type
     FileName: string;
     ColSeparator: char;
     LoadLimit: TRowIndex;
-    procedure LoadCSVFile (var DataTable: TDataTable);
-    procedure SetCell(var DataTable: TDataTable; Row, Col: Integer; Value: String);
+    RowIndex: TRowIndex;
+    procedure LoadCSVFile (DataTable: TDataTable);
+    procedure ParseLine (Line: string; DataTable: TDataTable);
+    procedure SetCell(DataTable: TDataTable; Row, Col: Integer; Value: String);
 end;
 
 implementation
 
 procedure TCSVFileLoader.LoadCSVFile;
-var f: TextFile;
-    s1, s2: string;
-    i, j: integer;
+var FileHandle: TextFile;
+    StringLine: string;
 begin
- DataTable.Clear;
+DataTable.Clear;
+RowIndex:=0;
 
- i := 0;
- AssignFile (f, FileName);
- Reset(f);
+AssignFile (FileHandle, FileName);
+Reset(FileHandle);
 
- while not eof(f) do
+while not eof(FileHandle) do
   begin
-    if LoadLimit>0 then
-      if DataTable.getRowCount>=LoadLimit then
-        break;
+  if (LoadLimit>0) and (DataTable.getRowCount>=LoadLimit) then
+    break;
 
-   readln (f, s1);
-   i := i + 1;
-   j := 0;
-   while pos(ColSeparator, s1)<>0 do
-    begin
-     s2 := copy(s1,1,pos(ColSeparator, s1)-1);
-     j := j + 1;
-     delete (s1, 1, pos(ColSeparator, S1));
-     SetCell(DataTable, i-1, j-1, s2);
-    end;
-
-   if pos (ColSeparator, s1)=0 then
-    begin
-     j := j + 1;
-     SetCell(DataTable, i-1, j-1, s1);
-    end;
+  readln (FileHandle, StringLine);
+  ParseLine(StringLine, DataTable);
   end;
- CloseFile(f);
+  
+CloseFile(FileHandle);
+end;
+
+procedure TCSVFileLoader.parseLine;
+var ColIndex: TColIndex;
+  StringCell: TString;
+begin
+ColIndex := 0;
+while pos(ColSeparator, Line)<>0 do
+  begin
+  StringCell := copy(Line, 1, pos(ColSeparator, Line)-1);
+  delete (Line, 1, pos(ColSeparator, Line));
+  SetCell(DataTable, RowIndex, ColIndex, StringCell);
+  inc(ColIndex);
+  end;
+
+if pos (ColSeparator, Line)=0 then
+  SetCell(DataTable, RowIndex, ColIndex, Line);
+
+inc(RowIndex);
 end;
 
 procedure TCSVFileLoader.LoadWithLimit;
@@ -91,8 +97,9 @@ if (Row=0) then
     DataTable.setColumnTitle(Col, Value)
   else
     DataTable.setColumnTitle(Col, 'Column'+Inttostr(Col+1));
-  end
-else
+  end;
+
+if (Row<>0) or not(FirstLineHeader) then
   begin
   // заголовочную строку не считаем
   if FirstLineHeader then

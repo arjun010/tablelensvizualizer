@@ -50,7 +50,6 @@ type
     procedure previewCSVOptionsChangedLoad;
     procedure refreshPreviewTable;
   public
-    procedure setDataTable(DataTable: TDataTable);
     { Public declarations }
   end;
 
@@ -102,37 +101,49 @@ if rbDotComma.Checked then CSVFileLoader.setSeparator(sepDotComma);
 
 CSVFileLoader.setHeaderLine(cbHeaders.Checked);
 
-CSVFileLoader.LoadWithLimit(edFileName.Text, PreviewDataTable, PREVIEW_LIMIT);
+if FileExists(edFileName.Text) then
+  CSVFileLoader.LoadWithLimit(edFileName.Text, PreviewDataTable, PREVIEW_LIMIT);
 
 RefreshPreviewTable;
 end;
 
 procedure TfrmOpenData.btnLoadClick(Sender: TObject);
 begin
+  if not FileExists(edFileName.Text) then
+    raise Exception.Create('File not found: '+edFileName.Text);
+
+
+CSVFileLoader.Load(edFileName.Text, MainForm.getDataTable);
+
 close;
-(Parent as TMainForm).LoadCSVFile(edFileName.Text);
+
+MainForm.StartLensTable;
 end;
 
 procedure TfrmOpenData.FormCreate(Sender: TObject);
 begin
-//PreviewDataTable:=TDataTable.Create;
+PreviewDataTable:=TDataTable.Create;
 CSVFileLoader:=TCSVFileLoader.Create;
 end;
 
 procedure TfrmOpenData.refreshPreviewTable;
 var RowIndex: TRowIndex;
   ColIndex: TColIndex;
+  Cell: PDataCell;
 begin
 btnLoad.Enabled:=false;
 PreviewGrid.ColCount:=1;
 PreviewGrid.RowCount:=2;
+PreviewGrid.Rows[0].Clear;
 PreviewGrid.Rows[1].Clear;
-PreviewGrid.Rows[2].Clear;
 
 // fill header line
 if PreviewDataTable.getColCount<1 then
   exit;
 PreviewGrid.ColCount:=PreviewDataTable.getColCount;
+PreviewGrid.DefaultColWidth:=(PreviewGrid.Width-30) div PreviewGrid.ColCount;
+for ColIndex:=0 to PreviewDataTable.getColCount-1 do
+  PreviewGrid.Cells[ColIndex, 0]:=PreviewDataTable.getColumnInfo(ColIndex).Title;
 
 // fill rows
 if PreviewDataTable.getRowCount<1 then
@@ -141,15 +152,12 @@ PreviewGrid.RowCount:=PreviewDataTable.getRowCount+1;
 for RowIndex:=0 to PreviewDataTable.getRowCount-1 do
   for ColIndex:=0 to PreviewGrid.ColCount-1 do
     begin
-    PreviewGrid.Cells[ColIndex, RowIndex+1]:=PreviewDataTable.getByRC(RowIndex, ColIndex).OriginalValue;
+    Cell:=PreviewDataTable.getByRC(RowIndex, ColIndex);
+    PreviewGrid.Cells[ColIndex, RowIndex+1]:=Cell.OriginalValue;
     end;
 
 btnLoad.Enabled:=true;
 end;
 
-procedure TfrmOpenData.setDataTable(DataTable: TDataTable);
-begin
-PreviewDataTable:=DataTable;
-end;
 
 end.
