@@ -11,7 +11,7 @@ uses
 
 type TLensTableControl=class
   public
-    constructor Create(aPaintBox: TPaintBox; aHeader: THeaderControl; aTrack:TTrackBar; aTableData: TDataTable);
+    constructor Create(var aPaintBox: TPaintBox; var aHeader: THeaderControl; var aTrack:TTrackBar; var aTableData: TDataTable);
     procedure PrepareLensTable;
   private
     PaintBox: TPaintBox;

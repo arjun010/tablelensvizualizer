@@ -1,6 +1,6 @@
 object frmOpenData: TfrmOpenData
-  Left = 240
-  Top = 376
+  Left = 216
+  Top = 121
   Width = 663
   Height = 439
   BorderStyle = bsSizeToolWin
@@ -11,6 +11,7 @@ object frmOpenData: TfrmOpenData
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
+  FormStyle = fsStayOnTop
   OldCreateOrder = False
   Position = poMainFormCenter
   OnCreate = FormCreate
@@ -72,7 +73,7 @@ object frmOpenData: TfrmOpenData
           Align = alBottom
           Caption = ' Preview '
           TabOrder = 2
-          object StringGrid1: TStringGrid
+          object PreviewGrid: TStringGrid
             Left = 2
             Top = 15
             Width = 483
