@@ -11,13 +11,19 @@ uses
 
 type TLensTableControl=class
   public
-    constructor Create(var aPaintBox: TPaintBox; var aHeader: THeaderControl; var aTrack:TTrackBar; var aTableData: TDataTable);
+    constructor Create(
+      aPaintBox: TPaintBox;
+      aHeader: THeaderControl;
+      aTrack:TTrackBar;
+      aTableData: TDataTable
+      );
     procedure PrepareLensTable;
   private
     PaintBox: TPaintBox;
     Header: THeaderControl;
     TableData: TDataTable;
     ViewPercent: TTrackBar;
+    VisibleColumnsCount: TColIndex;
     
     procedure OnPaintBox(Sender: TObject);
     procedure PaintColumn(Box: TPaintBox; ColNo: TColIndex);
@@ -80,7 +86,7 @@ if Header.Sections.Count<1 then
   exit;
 
 for sectNo:=0 to Header.Sections.Count-1 do
-  Header.Sections[sectNo].Width:=(Header.Width-ViewPercent.Width) div Header.Sections.Count;
+  Header.Sections[sectNo].Width:=(Header.Width-ViewPercent.Width) div VisibleColumnsCount;
 
 PaintBox.Repaint;
 end;
@@ -233,7 +239,10 @@ procedure TLensTableControl.PrepareLensTable;
 var sectionIndex: TColIndex;
   newSection: THeaderSection;
 begin
+TableData.analyzeColumns;
+
 Header.Sections.Clear;
+VisibleColumnsCount:=0;
 
 for sectionIndex:=0 to TableData.getColCount-1 do
   begin
@@ -241,14 +250,16 @@ for sectionIndex:=0 to TableData.getColCount-1 do
   newSection.Text:=TableData.getColumnInfo(sectionIndex).Title;
   newSection.Alignment:=taCenter;
   if TableData.getColumnInfo(sectionIndex).VisualType=cvtSkip then
-    newSection.MaxWidth:=0;
+    newSection.MaxWidth:=0
+  else
+    inc(VisibleColumnsCount);
   end;
 
 Header.OnResize(Header);
 
-Header.Enabled:=false;
-PaintBox.Enabled:=false;
-ViewPercent.Enabled:=false;
+Header.Enabled:=true;
+PaintBox.Enabled:=true;
+ViewPercent.Enabled:=true;
 end;
 
 end.
