@@ -97,12 +97,6 @@ if ColumnIndex>Length(ColumnInfo)-1 then
   raise Exception.Create('Column index exceeds column count')
 else
   Result:=addr(Row[ColumnIndex]);
-
-if (Row[ColumnIndex].VisualValue<0) or (Row[ColumnIndex].VisualValue>1) then
-  raise Exception.Create('The data is broken, v.1');
-
-if (Result.VisualValue<0) or (Result.VisualValue>1) then
-  raise Exception.Create('The data is broken, v.2');
 end;
 
 function TDataTable.getColCount: TColIndex;

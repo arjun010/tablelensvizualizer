@@ -35,7 +35,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure itmLoadDataClick(Sender: TObject);
   private
-    TableData:TDataTable;
+    TableData: TDataTable;
     FileLoader:TCSVFileLoader;
     TableLensControl:TLensTableControl;
     OpenForm: TfrmOpenData;
@@ -63,15 +63,10 @@ end;
 
 procedure TMainForm.LoadCSVFile(fname: string);
 begin
-  fname:=ExtractFilePath(Application.ExeName)+'..\TestData\'+fname;
   if not FileExists(fname) then
     raise Exception.Create('File not found: '+fname);
 
-  try
-   FileLoader.Load(Fname, TableData);
-  except
-    on e:EOutOfMemory do ShowMessage('File too large');
-  end;
+  FileLoader.Load(Fname, TableData);
 
   TableData.analyzeColumns;
   TableLensControl.PrepareLensTable;
@@ -80,8 +75,12 @@ end;
 procedure TMainForm.itmLoadDataClick(Sender: TObject);
 begin
 if OpenForm=nil then
- OpenForm:=TfrmOpenData.Create(Self);
-OpenForm.Show;
+  begin
+  OpenForm:=TfrmOpenData.Create(Self);
+  OpenForm.setDataTable(TableData);
+  end;
+
+OpenForm.ShowModal;
 end;
 
 end.
