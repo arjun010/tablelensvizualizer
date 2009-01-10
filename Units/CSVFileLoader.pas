@@ -7,11 +7,13 @@ uses
   TableData;
 
 type
-  TCSVSeparator=(sepTab, sepComma, sepDotComma);
+  TCSVSeparator=(sepUnknown, sepTab, sepComma, sepSemicolon);
+  TCSVSeparators=set of TCSVSeparator;
   TCSVFileLoader=class
   public
     procedure Load(SrcFile:String; Dest:TDataTable);
     procedure LoadWithLimit(SrcFile:String; Dest:TDataTable; Limit: TRowIndex);
+    function GuessSeparator(SrcFile:String; RowLimit: TRowIndex):TCSVSeparator;
     procedure setSeparator(aSeparator: TCSVSeparator);
     procedure setHeaderLine(aIsHeader: boolean);
   private
@@ -27,6 +29,34 @@ type
 end;
 
 implementation
+
+function StrCountChar(Line: String; Character: Char): Word;
+  var n: word;
+begin
+Result:=0;
+For n:=0 to length(Line)-1 do
+  if Line[n]=Character then
+    inc(Result);
+end;
+
+procedure GuessSeparatorSingle(
+  StringLine: string;
+  Separator:TCSVSeparator;
+  SeparatorChar:char;
+  RowsRead: word;
+  var PrevCount: word;
+  var PossibleSeparators:TCSVSeparators
+  );
+var CurCount: word;
+begin
+if not (sepTab in PossibleSeparators) then
+  exit;
+
+CurCount:=StrCountChar(StringLine, SeparatorChar);
+if (RowsRead>1) and (PrevCount<>CurCount) then
+  PossibleSeparators:=PossibleSeparators-[Separator];
+PrevCount:=CurCount;
+end;
 
 procedure TCSVFileLoader.LoadCSVFile;
 var FileHandle: TextFile;
@@ -46,7 +76,7 @@ while not eof(FileHandle) do
   readln (FileHandle, StringLine);
   ParseLine(StringLine, DataTable);
   end;
-  
+
 CloseFile(FileHandle);
 end;
 
@@ -75,7 +105,7 @@ FileName:=SrcFile;
 case Separator of
   sepTab: ColSeparator:=chr(9);
   sepComma: ColSeparator:=',';
-  sepDotComma: ColSeparator:=';';
+  sepSemicolon: ColSeparator:=';';
 end;
 
 LoadLimit:=Limit;
@@ -119,5 +149,44 @@ begin
 FirstLineHeader:=aIsHeader;
 end;
 
+function TCSVFileLoader.GuessSeparator(SrcFile: String;
+  RowLimit: TRowIndex): TCSVSeparator;
+var FileHandle: TextFile;
+    StringLine: string;
+    RowsRead: TRowIndex;
+    PossibleSeparators: TCSVSeparators;
+
+    PrevSemicolonCount, PrevCommaCount, PrevTabCount: Word;
+begin
+PossibleSeparators:=[sepTab, sepComma, sepSemicolon];
+RowsRead:=0;
+PrevTabCount:=0;
+
+AssignFile (FileHandle, SrcFile);
+Reset(FileHandle);
+
+while not eof(FileHandle) do
+  begin
+  if (LoadLimit>0) and (RowsRead>=LoadLimit) then
+    break;
+
+  readln(FileHandle, StringLine);
+  GuessSeparatorSingle(StringLine, sepTab, chr(9), RowsRead, PrevTabCount, PossibleSeparators);
+  GuessSeparatorSingle(StringLine, sepComma, ',', RowsRead, PrevCommaCount, PossibleSeparators);
+  GuessSeparatorSingle(StringLine, sepSemicolon, ';', RowsRead, PrevSemicolonCount, PossibleSeparators);
+  end; // while
+
+CloseFile(FileHandle);
+
+// decide what to return
+Result:=sepUnknown;
+
+if sepTab in PossibleSeparators then
+  Result:=sepTab;
+if sepComma in PossibleSeparators then
+  Result:=sepComma;
+if sepSemicolon in PossibleSeparators then
+  Result:=sepSemicolon;
+end;
+
 end.
- 

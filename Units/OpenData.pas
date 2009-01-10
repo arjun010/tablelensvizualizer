@@ -32,7 +32,7 @@ type
     cbHeaders: TCheckBox;
     rbTab: TRadioButton;
     rbComma: TRadioButton;
-    rbDotComma: TRadioButton;
+    rbSemicolon: TRadioButton;
     lblSeparator: TLabel;
     dlgOpenCSV: TOpenDialog;
     procedure btnBrowseClick(Sender: TObject);
@@ -49,6 +49,7 @@ type
     procedure previewCSVInitialLoad;
     procedure previewCSVOptionsChangedLoad;
     procedure refreshPreviewTable;
+    procedure GuessCSVSeparator;
   public
     { Public declarations }
   end;
@@ -87,7 +88,7 @@ end;
 
 procedure TfrmOpenData.previewCSVInitialLoad;
 begin
-
+GuessCSVSeparator;
 previewCSVOptionsChangedLoad;
 end;
 
@@ -97,7 +98,7 @@ PreviewDataTable.Clear;
 
 if rbTab.Checked then CSVFileLoader.setSeparator(sepTab);
 if rbComma.Checked then CSVFileLoader.setSeparator(sepComma);
-if rbDotComma.Checked then CSVFileLoader.setSeparator(sepDotComma);
+if rbSemicolon.Checked then CSVFileLoader.setSeparator(sepSemicolon);
 
 CSVFileLoader.setHeaderLine(cbHeaders.Checked);
 
@@ -111,7 +112,6 @@ procedure TfrmOpenData.btnLoadClick(Sender: TObject);
 begin
   if not FileExists(edFileName.Text) then
     raise Exception.Create('File not found: '+edFileName.Text);
-
 
 CSVFileLoader.Load(edFileName.Text, MainForm.getDataTable);
 
@@ -159,5 +159,17 @@ for RowIndex:=0 to PreviewDataTable.getRowCount-1 do
 btnLoad.Enabled:=true;
 end;
 
+procedure TfrmOpenData.GuessCSVSeparator;
+var GuessedSeparator: TCSVSeparator;
+begin
+GuessedSeparator:=CSVFileLoader.GuessSeparator(edFileName.Text, PREVIEW_LIMIT);
+
+case GuessedSeparator of
+  sepTab: rbTab.Checked:=true;
+  sepComma: rbComma.Checked:=true;
+  sepSemicolon: rbSemicolon.Checked:=true;
+end; // case
+
+end;
 
 end.
