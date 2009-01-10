@@ -1,6 +1,6 @@
 object MainForm: TMainForm
-  Left = 277
-  Top = 257
+  Left = 355
+  Top = 159
   AutoScroll = False
   Caption = 'MainForm'
   ClientHeight = 470

@@ -1,6 +1,6 @@
 object frmOpenData: TfrmOpenData
-  Left = 276
-  Top = 262
+  Left = 232
+  Top = 215
   Width = 663
   Height = 440
   BorderStyle = bsSizeToolWin
@@ -132,12 +132,12 @@ object frmOpenData: TfrmOpenData
             TabStop = True
             OnClick = rbTabClick
           end
-          object rbDotComma: TRadioButton
+          object rbSemicolon: TRadioButton
             Left = 38
             Top = 58
             Width = 113
             Height = 17
-            Caption = 'Dot-Comma'
+            Caption = 'Semicolon'
             TabOrder = 3
             OnClick = rbTabClick
           end
